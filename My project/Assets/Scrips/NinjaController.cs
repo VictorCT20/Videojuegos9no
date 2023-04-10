@@ -15,10 +15,13 @@ public class NinjaController : MonoBehaviour
     const int Ani_Slide = 3;
     const int Ani_lanzar = 4;
     const int Ani_muerte = 5;
-    public int velo = 4;
+    const int Ani_salto = 6;
+    public int velo = 4, velSalto = 4, salto = 2;
+    int cont;
     bool muerto = false;
     void Start()
     {
+        cont = salto;
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
@@ -57,9 +60,18 @@ public class NinjaController : MonoBehaviour
                 ChangeAnimation(Ani_quieto);
                 rb.velocity = new Vector2(0, rb.velocity.y);
             }
+            if(Input.GetKeyDown(KeyCode.UpArrow) && cont>0){
+                rb.AddForce(new Vector2(0, velSalto), ForceMode2D.Impulse);
+                ChangeAnimation(Ani_salto);
+                cont--;
+            }
         }
         
     }
+    void OnCollisionEnter2D(Collision2D other){
+        cont=salto;
+
+    } 
 
     private void ChangeAnimation(int a){
         animator.SetInteger("Estado",a);
