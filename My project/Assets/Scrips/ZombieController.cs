@@ -5,7 +5,7 @@ using UnityEngine;
 public class ZombieController : MonoBehaviour
 {
     Rigidbody2D rb;
-    public int velo = -2;
+    public int velo = 2;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -13,12 +13,13 @@ public class ZombieController : MonoBehaviour
 
     void Update()
     {
-        rb.velocity = new Vector2(velo, rb.velocity.y);
-    }/*
+        rb.velocity = new Vector2(-velo, rb.velocity.y);//hace que el zombie camine
+    }
     void OnCollisionEnter2D(Collision2D other){
-        //cont=salto;
-        if(other.gameObject.name == "Player"){
-            velo=0;
+
+        if(other.gameObject.tag == "Bala"){
+            Destroy(this.gameObject);
         }
-    } */
+
+    }
 }
