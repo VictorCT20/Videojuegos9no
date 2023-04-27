@@ -7,7 +7,10 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
     SpriteRenderer sr;
     Animator animator;
-
+    AudioSource audioSource;
+    public AudioClip bala;
+    public AudioClip saltar;
+    private GameManagerController gameManager;
 
     const int Ani_quieto = 0;
     const int Ani_correr = 1;
@@ -28,9 +31,11 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 3000f;
     void Start()
     {
+        gameManager = FindObjectOfType<GameManagerController>();
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -71,19 +76,27 @@ public class PlayerController : MonoBehaviour
             }
             else if(Input.GetKeyDown(KeyCode.UpArrow) && puededobleSalto && dobleSalto){
                 rb.AddForce(transform.up * jumpForce * 1.2f);
-                Debug.Log("mori");
+                audioSource.PlayOneShot(saltar);
                 pie.Jump(); manod.Jump(); manoi.Jump();
                 ChangeAnimation(Ani_salto);
                 dobleSalto = false;
             }
+            if(gameManager.balas > 0){
+                if(Input.GetKeyDown("x")){
+                    var bulletPosition = transform.position + new Vector3(direction,0,0);
+                    var o = Instantiate(bullet, bulletPosition, Quaternion.identity) as GameObject;
+                    var c = o.GetComponent<BalaController>();
+                    ChangeAnimation(Ani_disparo);
+                    if(direction==-1) c.SetLeftDirection();
+                    else c.SetRightDirection();
+                    gameManager.PerderBalas();
+                }
+            }
+            else Debug.Log("No tienes balas");
             //Debug.Log(puededobleSalto + "-" + dobleSalto + "-" + salto);
-            if(Input.GetKeyDown("x")){
-                var bulletPosition = transform.position + new Vector3(direction,0,0);
-                var o = Instantiate(bullet, bulletPosition, Quaternion.identity) as GameObject;
-                var c = o.GetComponent<BalaController>();
-                ChangeAnimation(Ani_disparo);
-                if(direction==-1) c.SetLeftDirection();
-                else c.SetRightDirection();
+            if(gameManager.vidas<=0){
+                Debug.Log("mori");
+                muerto = true;
             }
         }
         
@@ -99,14 +112,20 @@ public class PlayerController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other){
         //cont=salto;
         if(other.gameObject.tag == "Zombie"){
-            Debug.Log("mori");
-            muerto = true;
+            gameManager.PerderVidas();
         }
+        
     } 
     void OnTriggerEnter2D(Collider2D other){
         
         if(other.gameObject.tag == "LimiteZombie"){
             velo = velo + 1;
+        }
+        if(other.gameObject.tag == "MasBalas"){
+            Debug.Log("hola");
+            gameManager.GanarBalas();
+            audioSource.PlayOneShot(bala);
+            Destroy(other.gameObject);
         }
     }
 

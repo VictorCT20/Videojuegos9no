@@ -6,6 +6,8 @@ TagManager:
   tags:
   - LimiteZombie
   - Zombie
+  - Bala
+  - MasBalas
   layers:
   - Default
   - TransparentFX
