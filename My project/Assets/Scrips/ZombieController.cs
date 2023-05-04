@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class ZombieController : MonoBehaviour
 {
-    private GameManagerController gameManager;
+    private ManagerController gameManager;
     int vida = 2;
     Rigidbody2D rb;
     public int velo = 2;
     void Start()
     {
-        gameManager = FindObjectOfType<GameManagerController>();
+        gameManager = FindObjectOfType<ManagerController>();
         rb = GetComponent<Rigidbody2D>();
     }
 
